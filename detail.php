@@ -14,7 +14,7 @@
   $item->id = "1234";
   $item->title = $_POST["title"]; //nombre del producto seleccionado
   $item->description = "Dispositivo móvil de Tienda e-commerce";
-  $item->picture_url = 'https://maxir17-mp-ecommerce-php.herokuapp.com'.substr($_POST['img'],1);
+  $item->picture_url = $_SERVER['SERVER_NAME'].substr($_POST['img'],1);
   $item->quantity = 1;
   $item->unit_price =  $_POST["price"]; //precio del producto seleccionado
   
