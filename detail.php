@@ -1,3 +1,72 @@
+<?php
+  require_once 'vendor/autoload.php'; // You have to require the library from your Composer vendor folder
+
+  MercadoPago\SDK::setAccessToken("APP_USR-6317427424180639-042414-47e969706991d3a442922b0702a0da44-469485398"); // Either Production or SandBox AccessToken
+
+  MercadoPago\SDK::setIntegratorId("dev_24c65fb163bf11ea96500242ac130004");
+
+             
+  $preference = new MercadoPago\Preference();
+  
+  # Building an item
+  
+  $item = new MercadoPago\Item();
+  $item->id = "1234";
+  $item->title = $_POST["title"]; //nombre del producto seleccionado
+  $item->description = "Dispositivo móvil de Tienda e-commerce";
+  $item->picture_url = $_POST['img'];
+  $item->quantity = 1;
+  $item->unit_price =  $_POST["price"]; //precio del producto seleccionado
+  
+  $preference->items = array($item);
+
+   $preference->payment_methods = array(
+    "excluded_payment_methods" => array(
+      array("id" => "amex"),
+    ),
+    "excluded_payment_types" => array(
+      array("id" => "atm"),
+    ),
+    "installments" => 6
+  );
+  
+  $preference->external_reference = "maxir17@gmail.com";
+  $preference->notification_url = $_SERVER['SERVER_NAME']."/webhook.php";
+
+  $payer = array(
+                          'name' => 'Lalo',
+                          'surname' => 'Landa',
+                          'email' => 'test_user_63274575@testuser.com',
+                          'phone' => array(
+                                        'area_code' => '11',
+                                        'number' => '22223333'
+                                    ),
+                          'address' => array(
+                                        'zip_code' => '1111',
+                                        'street_name' => 'False',
+                                        'street_number' => '123'
+                                    )
+                        );
+
+  $preference->payer = (object)$payer;
+  $preference->auto_return = "approved";
+  $preference->back_urls = [
+                            'success' => $_SERVER['SERVER_NAME']."/success.php",
+                            'pending' => $_SERVER['SERVER_NAME']."/pending.php",
+                            'failure' => $_SERVER['SERVER_NAME']."/failure.php",
+                          ];
+
+  # Save the preference and send the HTTP Request to create
+  $preference->save(); 
+  
+  # Return the HTML code for button
+  
+  //echo "<a href='$preference->sandbox_init_point'> Pagar </a>";
+  //echo "<script>location.href='".$preference->init_point."';</script>";
+  
+?>
+
+
 <!DOCTYPE html>
 <html class="supports-animation supports-columns svg no-touch no-ie no-oldie no-ios supports-backdrop-filter as-mouseuser" lang="en-US"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
@@ -11,6 +80,8 @@
     src="https://code.jquery.com/jquery-3.4.1.min.js"
     integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
     crossorigin="anonymous"></script>
+
+    <script src="https://www.mercadopago.com/v2/security.js" view="item"></script>
 
     <link rel="stylesheet" href="./assets/category-landing.css" media="screen, print">
 
@@ -130,7 +201,9 @@
                                             <?php echo "$" . $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+
+                                    <button onclick="javascript: location.href='<?php echo $preference->init_point; ?>';" class="mercadopago-button" >Pagar la compra</button>
+
                                 </div>
                             </div>
                         </div>
