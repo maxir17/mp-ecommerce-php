@@ -31,7 +31,7 @@
   );
   
   $preference->external_reference = "maxir17@gmail.com";
-  $preference->notification_url = $_SERVER['SERVER_NAME']."/webhook.php";
+  $preference->notification_url = $_SERVER['SERVER_NAME']."/webhook.php?source_news=webhooks";
 
   $payer = array(
                           'name' => 'Lalo',
