@@ -28,7 +28,9 @@
 http_response_code(200);
 
 $fichero = 'webhook.txt';
-$data = json_encode(var_export($_GET, TRUE));
+//$data = json_encode(var_export($_POST, TRUE));
+$data = file_get_contents('php://input', true);
+
 // Escribe el contenido al fichero
 file_put_contents($fichero, $data);
 
